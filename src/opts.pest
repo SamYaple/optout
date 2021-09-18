@@ -1,12 +1,9 @@
 WHITESPACE = _{ " " }
 
-prefix = { "-" }
-debug = @{ prefix{2} ~ "debug" | prefix ~ "d" }
-help  = @{ prefix{2} ~ "help"  | prefix ~ "h" }
+posix_path = @{ "."? ~ ("/" ~ ('a'..'z' | 'A'..'Z' | '0'..'9' | "." | "_" | "-")+ )+ }
 
-opt = {
-    debug |
-    help
-}
+debug = { ("--debug" | "-d") }
+help  = { ("--help"  | "-h") }
+file  = { ("--file"  | "-f") ~ "="? ~ posix_path } 
 
-options = _{ WHITESPACE? ~ (opt)+? } 
+options = _{ (debug | help | file)+? } 

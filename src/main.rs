@@ -9,22 +9,22 @@ use pest::Parser;
 struct OptParser;
 
 fn main() {
-    let pairs = OptParser::parse(Rule::options, " --debug -d --help -h --wut nothing else parses --debug").unwrap_or_else(|e| panic!("{}", e));
+    let raw_args: Vec<String> = std::env::args().collect();
+    // Drop the 0th element which is the program name in common situations
+    let args = &raw_args[1..raw_args.len()].join(" ");
 
-    // Because ident_list is silent, the iterator will contain idents
+    let pairs = OptParser::parse(Rule::options, args)
+        .unwrap_or_else(|e| panic!("{}", e));
+
     for pair in pairs {
-        // A pair is a combination of the rule which matched and a span of input
-        //println!("Rule:    {:?}", pair.as_rule());
-        //println!("Span:    {:?}", pair.as_span());
-        //println!("Text:    {}", pair.as_str());
-
-        // A pair can be converted to an iterator of the tokens which make it up:
-        for inner_pair in pair.into_inner() {
-            match inner_pair.as_rule() {
-                Rule::debug => println!("Rule: {:?}", inner_pair.as_rule()),
-                Rule::help  => println!("Rule: {:?}",  inner_pair.as_rule()),
-                _ => unreachable!()
-            };
-        }
+        match pair.as_rule() {
+            Rule::debug => println!("Debug is set"),
+            Rule::help  => println!("Showing Help"),
+            Rule::file  => {
+                let path = pair.into_inner().as_str();
+                println!("File path: {:?}", path)
+            },
+            _ => unreachable!()
+        };
     }
 }
