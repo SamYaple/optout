@@ -1,9 +1,11 @@
 WHITESPACE = _{ " " }
 
-posix_path = @{ "."? ~ ("/" ~ ('a'..'z' | 'A'..'Z' | '0'..'9' | "." | "_" | "-")+ )+ }
+path  = { (!opts ~ ANY)* }
 
 debug = { ("--debug" | "-d") }
 help  = { ("--help"  | "-h") }
-file  = { ("--file"  | "-f") ~ "="? ~ posix_path } 
+file  = { ("--file"  | "-f") ~ "="? ~ path }
 
-options = _{ (debug | help | file)+? } 
+opts = _{ debug | help | file }
+
+options = _{ SOI ~ opts*? ~ EOI }
