@@ -1,0 +1,12 @@
+WHITESPACE = _{ " " }
+
+prefix = { "-" }
+debug = @{ prefix{2} ~ "debug" | prefix ~ "d" }
+help  = @{ prefix{2} ~ "help"  | prefix ~ "h" }
+
+opt = {
+    debug |
+    help
+}
+
+options = _{ WHITESPACE? ~ (opt)+? } 
