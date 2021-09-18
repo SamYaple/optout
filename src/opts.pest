@@ -1,11 +1,17 @@
 WHITESPACE = _{ " " }
 
 path  = { (!opts ~ ANY)* }
+prog = { path }
+opts = _{ debug | help | file | kvlist }
+options = _{ SOI ~ prog ~ opts*? ~ EOI }
 
 debug = { ("--debug" | "-d") }
 help  = { ("--help"  | "-h") }
 file  = { ("--file"  | "-f") ~ "="? ~ path }
 
-opts = _{ debug | help | file }
+char = { ASCII_ALPHANUMERIC | "." | "_" | "/" }
+name = { char+ }
+value = { char* }
 
-options = _{ SOI ~ opts*? ~ EOI }
+kvpair = @{ name ~ "=" ~ value }
+kvlist = { "--kvlist" ~ kvpair+ }
