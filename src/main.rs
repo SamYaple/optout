@@ -16,23 +16,22 @@ fn main() -> Result<(), pest::error::Error<Rule>> {
     let raw_args: Vec<String> = std::env::args().collect();
     let args = &raw_args.join(" ");
 
-    let pairs = OptParser::parse(Rule::options, args)?;
-    for pair in pairs {
-        match pair.as_rule() {
+    let opts = OptParser::parse(Rule::options, args)?;
+    for opt in opts {
+        match opt.as_rule() {
             Rule::debug => println!("Debug is set"),
             Rule::help  => help(),
             Rule::prog  => {
-                let path = std::path::Path::new(pair.into_inner().as_str());
+                let path = std::path::Path::new(opt.into_inner().as_str());
                 println!("Program: {}", path.display());
             }
             Rule::file  => {
-                let path = std::path::Path::new(pair.into_inner().as_str());
+                let path = std::path::Path::new(opt.into_inner().as_str());
                 println!("File: {}", path.display());
             },
             Rule::kvlist => {
-                for rule in pair.into_inner() {
-                    println!("Rule: {:?}", rule);
-                    println!("kvpair found: {}", rule.as_str());
+                for kvpair in opt.into_inner() {
+                    println!("kvpair found: {}", kvpair.as_str());
                 }
             },
             Rule::EOI   => (),
